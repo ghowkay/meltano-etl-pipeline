@@ -1,0 +1,17 @@
+config-version: 2
+version: 2
+sources:
+  - name: tap_spacex     # the name we want to reference this source by
+    schema: tap_spacex   # the schema the raw data was loaded into
+    tables:
+      - name: starlink
+      - name: payloads
+      - name: crew
+      - name: cores
+      - name: capsules
+      - name: ships
+      - name: rockets
+      - name: landpads
+      - name: launchpads
+      - name: dragons
+      - name: launches

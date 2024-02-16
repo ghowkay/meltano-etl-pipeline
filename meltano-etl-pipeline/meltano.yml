@@ -1,0 +1,45 @@
+version: 1
+default_environment: dev
+project_id: b2989c54-7917-4dbd-8606-0faa40c0e2bc
+environments:
+- name: dev
+- name: staging
+- name: prod
+plugins:
+  extractors:
+  - name: tap-spacex
+    namespace: tap_spacex
+    pip_url: -e ../tap-spacex
+    executable: tap-spacex
+  loaders:
+  - name: target-postgres
+    variant: meltanolabs
+    pip_url: meltanolabs-target-postgres
+    config:
+      host: localhost
+      port: 5432
+      database: remotecom_etl
+      add_record_metadata: true
+      user: remote
+      password: remote.com
+      schema: tap_spacex
+  utilities:
+  - name: dbt-postgres
+    variant: dbt-labs
+    pip_url: dbt-core~=1.5.2 dbt-postgres~=1.5.2 git+https://github.com/meltano/dbt-ext.git@main
+    config:
+      dbname: remotecom_etl
+      host: localhost
+      port: 5432
+      schema: transformed
+      user: remote
+      password: remote.com
+
+jobs:
+- name: tap-spacex-to-target-postgres-transformed
+  tasks:
+  - tap-spacex target-postgres dbt-postgres:run
+- name: spacex_etl
+  tasks:
+  - tap-spacex target-postgres
+  - dbt-postgres:run
